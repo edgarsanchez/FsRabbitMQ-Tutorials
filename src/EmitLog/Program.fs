@@ -17,7 +17,7 @@ let main argv =
     channel.ExchangeDeclare (exchange = "logs", ``type`` = ExchangeType.Fanout)
 
     let message = getMessage argv
-    let body = ReadOnlyMemory(Encoding.UTF8.GetBytes message)
+    let body = ReadOnlyMemory (Encoding.UTF8.GetBytes message)
     channel.BasicPublish (exchange = "logs", routingKey = "", basicProperties = null, body = body)
     printfn " [x] Sent %s" message
 
