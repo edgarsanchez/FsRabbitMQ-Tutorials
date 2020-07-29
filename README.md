@@ -13,6 +13,7 @@ F# implementation of [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.ht
 * The [Routing tutorial](https://www.rabbitmq.com/tutorials/tutorial-four-dotnet.html)
   * The src/EmitLogDirect folder contains a console app that publishes a message to the direct_logs exchange using a severity level as a routing key, e.g. `dotnet run warning "This is a warning!"`
   * The src/ReceiveLogsDirect folder contains a console app that subscribes to the exchange with a temporary queue and one or more routing keys, e.g. `dotnet run warning` (several ReceiveLogsDirect app can be run simultaneously, each waiting for specific routing keys in a temporary queue)
+
 All the examples assume a RabbitMQ server installation on the local computer. To run any of the console apps you just have to get into the corresponding folder and type:
 
     dotnet run
