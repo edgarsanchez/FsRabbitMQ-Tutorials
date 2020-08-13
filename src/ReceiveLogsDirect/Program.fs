@@ -5,33 +5,33 @@ open System.Text
 
 [<EntryPoint>]
 let main argv =
-    if Array.length argv < 1 then
-        eprintfn "Usage: %s [info] [warning] [error]" (Environment.GetCommandLineArgs().[0])
-        printfn " Press [Enter] to exit."
-        Console.ReadLine () |> ignore
-        1
-    else
-        let factory = ConnectionFactory (HostName = "localhost")
-        use connection = factory.CreateConnection ()
-        use channel = connection.CreateModel ()
-        
-        channel.ExchangeDeclare (exchange = "direct_logs", ``type`` = ExchangeType.Direct)
-        let queueName = channel.QueueDeclare().QueueName
+    let factory = ConnectionFactory (HostName = "localhost")
+    use connection = factory.CreateConnection ()
+    use channel = connection.CreateModel ()
 
-        for severity in argv do
-            channel.QueueBind (queue = queueName, exchange = "direct_logs", routingKey = severity)
-        
-        printfn " [*] Waiting for messages."
+    let exitCode =         
+        if Array.length argv < 1 then
+            eprintfn "Usage: %s [info] [warning] [error]" (Environment.GetCommandLineArgs().[0])
+            1
+        else
+            channel.ExchangeDeclare (exchange = "direct_logs", ``type`` = ExchangeType.Direct)
+            let queueName = channel.QueueDeclare().QueueName
 
-        let consumer = EventingBasicConsumer (channel)
-        consumer.Received.AddHandler (fun _ ea ->
-            let body = ea.Body.ToArray ()
-            let message = Encoding.UTF8.GetString body
-            let routingKey = ea.RoutingKey
-            printfn " [x] Received '%s': '%s'" routingKey message )
+            for severity in argv do
+                channel.QueueBind (queue = queueName, exchange = "direct_logs", routingKey = severity)
             
-        channel.BasicConsume (queue = queueName, autoAck = true, consumer = consumer) |> ignore
+            printfn " [*] Waiting for messages."
 
-        printfn " Press [Enter] to exit."
-        Console.ReadLine () |> ignore
-        0
+            let consumer = EventingBasicConsumer (channel)
+            consumer.Received.AddHandler (fun _ ea ->
+                let body = ea.Body.ToArray ()
+                let message = Encoding.UTF8.GetString body
+                let routingKey = ea.RoutingKey
+                printfn " [x] Received '%s': '%s'" routingKey message )
+                
+            channel.BasicConsume (queue = queueName, autoAck = true, consumer = consumer) |> ignore
+            0
+
+    printfn " Press [Enter] to exit."
+    Console.ReadLine () |> ignore
+    exitCode
