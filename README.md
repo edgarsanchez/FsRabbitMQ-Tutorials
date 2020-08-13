@@ -11,11 +11,16 @@ F# implementation of [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.ht
   * The src/EmitLog folder contains a console app that publishes a message to the logs exchange
   * The src/ReceiveLogs folder contains a console app that subscribes to the exchange with a temporary queue (many ReceiveLogs apps can be run simultaneously, each one will have its own temporary queue)
 * The [Routing tutorial](https://www.rabbitmq.com/tutorials/tutorial-four-dotnet.html)
-  * The src/EmitLogDirect folder contains a console app that publishes a message to the direct_logs exchange using a severity level as a routing key, e.g. `dotnet run warning "This is a warning!"`
-  * The src/ReceiveLogsDirect folder contains a console app that subscribes to the exchange with a temporary queue and one or more routing keys, e.g. `dotnet run warning` (several ReceiveLogsDirect app can be run simultaneously, each waiting for specific routing keys in a temporary queue)
+  * The src/EmitLogDirect folder contains a console app that publishes a message to the direct_logs exchange using a severity level as routing key, e.g. `dotnet run warning "This is a warning!"`
+  * The src/ReceiveLogsDirect folder contains a console app that subscribes to the exchange with a temporary queue and one or more routing keys, e.g. `dotnet run warning` (several ReceiveLogsDirect apps can be run simultaneously, each waiting for specific routing keys in a temporary queue)
+* The [Topics tutorial](https://www.rabbitmq.com/tutorials/tutorial-five-dotnet.html)
+  * The src/EmitLogTopic folder contains a console app that publishes a message to the topic_logs exchange using a topic as routing key, e.g. `dotnet run kern.critical "A critical kernel error."`
+  * The src/ReceiveLogsTopic folder contains a console app that subscribes to the exchange with a temporary queue and one or more topics as routing keys, e.g. `dotnet run kern.*` (several ReceiveLogsTopic apps can be run simultaneously, each waiting for specific topics in a temporary queue)
 
 All the examples assume a RabbitMQ server installation on the local computer. To run any of the console apps you just have to get into the corresponding folder and type:
 
     dotnet run
+
+Followed by specific arguments, if any, as explained in each paragraph above.
 
 Comments and feedback welcomed!
