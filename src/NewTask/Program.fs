@@ -17,7 +17,7 @@ let main argv =
     channel.QueueDeclare (queue = "task_queue", durable = true, exclusive = false, autoDelete = false, arguments = null) |> ignore
 
     let message = getMessage argv
-    let body = ReadOnlyMemory(Encoding.UTF8.GetBytes message)
+    let body = ReadOnlyMemory (Encoding.UTF8.GetBytes message)
 
     let properties = channel.CreateBasicProperties ()
     properties.Persistent <- true
