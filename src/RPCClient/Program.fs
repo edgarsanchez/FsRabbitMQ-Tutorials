@@ -19,12 +19,8 @@ type RpcClient () =
     do
         consumer.Received.AddHandler (fun _ ea ->
             match callbackMapper.TryRemove ea.BasicProperties.CorrelationId with
-            | true, tcs ->
-                let body = ea.Body.ToArray ()
-                let response = Encoding.UTF8.GetString body
-                tcs.TrySetResult response |> ignore
-            | _ ->
-                () )
+            | true, tcs -> ea.Body.ToArray () |> Encoding.UTF8.GetString |> tcs.TrySetResult |> ignore
+            | _         -> () )
 
     member __.CallAsync (message: string, ?cancellationToken: CancellationToken) =
         let correlationId = Guid.NewGuid().ToString ()
@@ -37,8 +33,8 @@ type RpcClient () =
 
         channel.BasicConsume(consumer = consumer, queue = replyQueueName, autoAck = true) |> ignore
 
-        let ctx = match cancellationToken with Some ctx -> ctx| None -> CancellationToken.None
-        ctx.Register (fun _ -> callbackMapper.TryRemove correlationId |> ignore) |> ignore
+        let canToken = match cancellationToken with Some token -> token| None -> CancellationToken.None
+        canToken.Register (fun _ -> callbackMapper.TryRemove correlationId |> ignore) |> ignore
         tcs.Task
 
     member __.Close () =
